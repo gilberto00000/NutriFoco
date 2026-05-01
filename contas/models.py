@@ -21,17 +21,10 @@ class Profile(models.Model):
     cpf = models.CharField(max_length=14, unique=True, null=True, blank=True, validators=[valida_cpf])
     phone = models.CharField(max_length=20, null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
+    crn = models.CharField(max_length=20, null=True, blank=True)
+    specialty = models.CharField(max_length=100, null=True, blank=True)
     photo = models.ImageField(upload_to='profiles/', blank=True, null=True)
 
     def __str__(self):
         return f"Perfil de {self.user}"
     
-    
-class Meta:
-    constraints = [
-        models.UniqueConstraint(
-            fields=['cpf'],
-            condition=models.Q(deleted_at__isnull=True),
-            name='unique_active_cpf'
-        )
-    ]

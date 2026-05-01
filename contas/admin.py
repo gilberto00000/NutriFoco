@@ -1,16 +1,6 @@
 from django.contrib import admin
-
-# Register your models here.
-from .models import Profile
-
-@admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'cpf', 'phone', 'birth_date')
-    search_fields = ('user__username', 'cpf')
-    from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User
-from contas.models import Profile
+from .models import Profile, User
 
 
 
@@ -37,3 +27,9 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(User, CustomUserAdmin)
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'cpf', 'phone', 'birth_date', 'crn', 'specialty')
+    search_fields = ('user__username', 'cpf', 'crn')

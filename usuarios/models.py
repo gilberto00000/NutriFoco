@@ -1,17 +1,30 @@
 from django.db import models
 from django.conf import settings
 from nutriFoco.models import BaseModel
+from django.utils import timezone
 
 User = settings.AUTH_USER_MODEL
 
 
 class Patient(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    nutritionist = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patients')
+    nutritionist = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='patients',
+        null=True,
+        blank=True,
+    )
 
-    height = models.FloatField()  # metros
-    initial_weight = models.FloatField()
-    goal = models.CharField(max_length=50)
+    SEX_CHOICES = (
+        ('F', 'Feminino'),
+        ('M', 'Masculino'),
+        ('O', 'Outro'),
+    )
+    height = models.FloatField() 
+    sex = models.CharField(max_length=1, choices=SEX_CHOICES, default='O')
+    initial_weight = models.FloatField(null=True, blank=True)
+    goal = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user}"
@@ -43,6 +56,19 @@ class Food(BaseModel):
 
 class NutritionPlan(BaseModel):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='plans')
+    nutritionist = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='nutrition_plans',
+        null=True,
+        blank=True,
+    )
+    start_date = models.DateField(default=timezone.localdate)
+    end_date = models.DateField(default=timezone.localdate)
+    plan_text = models.TextField(
+        help_text='Estruture o plano com horarios. Ex: 07:00 - Cafe da manha...',
+        default='',
+    )
     active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -63,7 +89,7 @@ class MealFood(models.Model):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name='foods')
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
 
-    quantity = models.FloatField()  # gramas
+    quantity = models.FloatField()  
 
     def __str__(self):
         return f"{self.food} - {self.quantity}g"
