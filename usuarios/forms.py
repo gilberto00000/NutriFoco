@@ -1,6 +1,9 @@
 from django import forms
 
 from .models import DailyLog, NutritionPlan
+from django.utils import timezone
+from django import forms
+from .models import Agendamento
 
 
 class NutritionPlanForm(forms.ModelForm):
@@ -31,3 +34,24 @@ class DailyLogForm(forms.ModelForm):
             'followed': 'Seguiu o plano?',
         }
         widgets = {'date': forms.DateInput(attrs={'type': 'date'})}
+
+class AgendamentoForm(forms.ModelForm):
+    disponibilidade = forms.ModelChoiceField(
+        label="Horário disponível",
+        queryset=None,
+        empty_label="Selecione um horário"
+    )
+
+    class Meta:
+        model = Agendamento
+        fields = ['disponibilidade']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        from agenda.models import Availability
+
+        self.fields['disponibilidade'].queryset = Availability.objects.filter(
+            is_available=True,
+            date__gte=timezone.localdate()
+        ).order_by('date', 'start_time')

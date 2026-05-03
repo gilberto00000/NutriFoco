@@ -15,28 +15,34 @@ from .forms import (
 )
 from .models import Appointment, Availability, ConsultationNote
 
+from usuarios.models import Agendamento
+
 
 class NutritionistDashboardView(LoginRequiredMixin, NutritionistRequiredMixin, TemplateView):
     template_name = 'agenda/painel_nutricionista.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        today = timezone.localdate()
-        context['appointments_today'] = Appointment.objects.filter(
+
+        hoje = timezone.localdate()
+
+        context['appointments_today'] = Agendamento.objects.filter(
             nutritionist=self.request.user,
-            datetime__date=today,
-        ).select_related('patient', 'patient__user').order_by('datetime')
-        context['next_appointments'] = Appointment.objects.filter(
+            data=hoje
+        ).order_by('hora')
+
+        context['next_appointments'] = Agendamento.objects.filter(
             nutritionist=self.request.user,
-            datetime__date__gte=today,
-        ).select_related('patient', 'patient__user').order_by('datetime')[:8]
+            data__gt=hoje
+        ).order_by('data', 'hora')
+
         context['next_slots'] = Availability.objects.filter(
             nutritionist=self.request.user,
             is_available=True,
-            date__gte=today,
-        ).order_by('date', 'start_time')[:8]
-        return context
+            date__gte=hoje
+        ).order_by('date', 'start_time')
 
+        return context
 
 class AvailabilityListView(LoginRequiredMixin, NutritionistRequiredMixin, ListView):
     model = Availability

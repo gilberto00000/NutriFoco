@@ -3,6 +3,7 @@ from django.conf import settings
 from nutriFoco.models import BaseModel
 from django.utils import timezone
 
+
 User = settings.AUTH_USER_MODEL
 
 
@@ -94,6 +95,19 @@ class MealFood(models.Model):
     def __str__(self):
         return f"{self.food} - {self.quantity}g"
 
+class Agendamento(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    nutritionist = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    data = models.DateField()
+    hora = models.TimeField()
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.patient} - {self.data} {self.hora}"
+    
+    
 
 class DailyLog(BaseModel):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='logs')
@@ -105,3 +119,4 @@ class DailyLog(BaseModel):
 
     def __str__(self):
         return f"{self.patient} - {self.date}"
+    

@@ -17,9 +17,14 @@
                     <a href="{% url 'dashboard_redirect' %}">
                         {% if user.user_type == 'nutritionist' %}Painel do Nutricionista{% else %}Painel{% endif %}
                     </a>
+                    {% if user.user_type == 'patient' %}
+                        <a href="{% url 'dashboard_paciente' %}">Meu painel</a>
+                        <a href="{% url 'agendamento_create' %}">Agendar consulta</a>
+                        <a href="{% url 'agendamento_list' %}">Meus agendamentos</a>
+                    {% endif %}
                     {% if user.user_type == 'nutritionist' %}
                         <a href="{% url 'nutrition_plan_list' %}">Planos alimentares</a>
-                        <a href="{% url 'availability_list' %}">Agenda</a>
+                        {# <a href="{% url 'appointment_list' %}">Agenda</a> #}
                         <a href="{% url 'consultation_note_list' %}">Notas</a>
                     {% endif %}
                     <form method="post" action="{% url 'logout' %}" class="nav-logout">
