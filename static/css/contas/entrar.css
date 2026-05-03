@@ -41,3 +41,20 @@ button[type="submit"] {
     width: 100%;
     margin-top: 10px;
 }
+
+.login-signup {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.login-signup a {
+    font-weight: 600;
+    color: #15803d;
+    text-decoration: none;
+}
+
+.login-signup a:hover {
+    text-decoration: underline;
+}
